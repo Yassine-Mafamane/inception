@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  mariadb:
+    build: ./mariadb
+    container_name: mydb
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - mynetwork
+
+  wordpress:
+    build: ./wordpress
+    container_name: mywordpress
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - wordpress_data:/var/www/html
+    networks:
+      - mynetwork
+
+  nginx:
+    build: ./nginx
+    container_name: mynginx
+    restart: unless-stopped
+    ports:
+      - "433:433"
+    volumes:
+      - wordpress_data:/var/www/html:ro
+    networks:
+      - mynetwork
+
+volumes:
+  mariadb_data:
+  wordpress_data:
+
+networks:
+  mynetwork:
